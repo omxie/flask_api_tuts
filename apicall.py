@@ -1,6 +1,15 @@
 from flask import Flask, jsonify, request 
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Float
+import os
 
 app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir, 'planets.db')
+
+db=SQLAlchemy(app)
+
+
 
 @app.route('/apicall')
 def apicall():
@@ -19,3 +28,21 @@ def parameters(name: str, age: int):
     else:
         return jsonify(message='Welcome '+name+', you are old enough to visit the website!')
     
+
+class User(db.Model):
+    __tablename__='users'
+    id = Column(Integer, primary_key=True)
+    fname = Column(String)
+    lname = Column(String)
+    email = Column(String, unique=True)
+    password = Column(String)
+
+class Planet(db.Model):
+    __tablename__ = 'planets'
+    planet_id = Column(Integer, primary_key=True)
+    pname = Column(String)
+    ptype = Column(String)
+    home_star = Column(String)
+    mass = Column(Float)
+    radius = Column(Float)
+    distance = Column(Float)
