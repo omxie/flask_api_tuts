@@ -160,6 +160,20 @@ def add_planet():
         db.session.commit()
         return jsonify(message="You added a planet to the database!")
 
+@app.route('/update_planet', methods=['PUT'])
+@jwt_required
+def update_planet():
+    pname = request.form['pname']
+    test = Planet.query.filter_by(pname=pname).first()
+    if test:
+        test.ptype = request.form['ptype']
+        test.home_star = request.form['hstar']
+        test.radius = float(request.form['radius'])
+        db.session.commit()
+        return jsonify(message="Planet updated")
+    else:
+        return jsonify(message="Planet does not exist")
+
 
 class User(db.Model):
     __tablename__='users'
