@@ -100,12 +100,12 @@ def login():
         email = request.json['email']
         password = request.json['password']
     else:
-        email = request.forn['email']
+        email = request.form['email']
         password = request.form['password']
 
     test = User.query.filter_by(email=email, password=password).first()
     if test:
-        access_tokem = create_access_token(identity = email)
+        access_token = create_access_token(identity = email)
         return jsonify(message='login successfull', access_token=access_token)
     else:
         return jsonify(message='invalid email'), 401
@@ -133,6 +133,33 @@ def planet_details(planet_id : int):
         return jsonify(result)
     else:
         return jsonify(message='planet for the given id does not exists'), 404
+
+@app.route('/add_planet', methods = ['POST'])
+@jwt_required
+def add_planet():
+    planet_name=request.form['pname']
+    test = Planet.query.filter_by(pname=planet_name).first()
+    if test:
+        return jsonify('Planet already exists!')
+    else:
+        planet_name=request.form['pname']
+        ptype = request.form['ptype']
+        home_star = request.form['hstar']
+        mass = request.form['mass']
+        radius = request.form['radius']
+        distance = request.form['distance']
+
+        new_planet = Planet(pname=planet_name,
+        ptype = ptype,
+        home_star = home_star,
+        mass=mass,
+        radius=radius,
+        distance= distance)
+    
+        db.session.add(new_planet)
+        db.session.commit()
+        return jsonify(message="You added a planet to the database!")
+
 
 class User(db.Model):
     __tablename__='users'
