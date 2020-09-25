@@ -174,6 +174,16 @@ def update_planet():
     else:
         return jsonify(message="Planet does not exist")
 
+@app.route('/delete_planet', methods=['DELETE'])
+def delete_planet():
+    pname = request.form['pname']
+    test = Planet.query.filter_by(pname=pname).first()
+    if test:
+        db.session.delete(test)
+        db.session.commit()
+        return jsonify(message = "Planet successfully deleted!")
+    else:
+        return jsonify(message="Planet with the given name does not exist!")
 
 class User(db.Model):
     __tablename__='users'
